@@ -152,8 +152,91 @@
 
 /* --- ETIQUETAS DE ERROR --- */
 .label-error {
-    -fx-text-fill: #E74C3C; /* Rojo intenso (coincide con el botón de salir/cancelar) */
+    -fx-text-fill: #E74C3C;
     -fx-font-weight: bold;
-    -fx-font-size: 12px; /* Un poco más pequeño si prefieres */
+    -fx-font-size: 12px;
     -fx-effect: none; /* Quitamos sombras para que se lea nítido */
+}
+
+/* --REPORTES FINANCIEROS  (prefijo rf-)-- */
+
+.rf-header {
+    -fx-background-color: #1a2b4a;
+}
+
+.rf-header-top {
+    -fx-padding: 16 24 12 24;
+}
+
+.rf-header-titulo {
+    -fx-text-fill: white;
+    -fx-effect: none;
+}
+
+.rf-toolbar {
+    -fx-background-color: #253d6b;
+    -fx-padding: 10 24 10 24;
+    -fx-border-color: transparent transparent #1a2b4a transparent;
+    -fx-border-width: 1;
+}
+
+.rf-toolbar .label {
+    -fx-text-fill: #b8cae8;
+    -fx-font-weight: normal;
+}
+
+.btn-pdf {
+    -fx-background-color: #A52019;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+
+.btn-pdf:hover {
+    -fx-background-color: #8a1a14;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(three-pass-box, rgba(165,32,25,0.4), 8, 0, 0, 3);
+}
+
+.btn-primario {
+    -fx-background-color: #2980B9;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.btn-primario:hover {
+    -fx-background-color: #2471a3;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(three-pass-box, rgba(52,152,219,0.4), 8, 0, 0, 3);
+}
+
+.rf-grafica {
+    -fx-background-color: transparent;
+    -fx-border-color: #c5d2e8;
+    -fx-border-width: 1;
+    -fx-border-insets: 16 24 0 24;
+    -fx-background-insets: 16 24 0 24;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.rf-footer {
+    -fx-background-color: transparent;
+    -fx-border-color: #c5d2e8 transparent transparent transparent;
+    -fx-border-width: 1;
+    -fx-padding: 12 24 12 24;
+}
+
+.btn-auditoria {
+    -fx-background-color: #eef2ff;
+    -fx-text-fill: #2471a3;
+    -fx-border-color: #b8cae8;
+}
+
+.btn-auditoria:hover {
+    -fx-background-color: #dce8f8;
+    -fx-text-fill: #1a5276;
+    -fx-border-color: #3498DB;
 }
