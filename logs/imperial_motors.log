@@ -195,3 +195,17 @@
 2025-12-12 13:46:54 [Thread-803] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 11 | Nombre: Jorge Manuel | Accion: Inicio de sesión exitoso
 2025-12-12 13:47:16 [Thread-953] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 11 | Nombre: Jorge Manuel | Accion: Generó vista previa: KPIs y Anomalías
 2025-12-12 13:47:19 [Thread-954] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 11 | Nombre: Jorge Manuel | Accion: Generó vista previa: Ventas del Mes
+2026-05-08 18:30:39 [JavaFX Application Thread] INFO  com.imperial.modelo.ConexionBD - Configuración de base de datos cargada correctamente. URL: jdbc:mysql://localhost:3306/imperialmotors
+2026-05-08 18:30:42 [Thread-5] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 0 | Nombre: admin@administrador.com | Accion: Intento de inicio de sesión fallido
+2026-05-08 18:31:01 [Thread-6] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Inicio de sesión exitoso
+2026-05-08 18:31:13 [Thread-43] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Generó vista previa: Ventas por Semana
+2026-05-08 18:31:17 [Thread-44] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Generó vista previa: Inventario Actual
+2026-05-08 18:31:21 [Thread-45] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Generó vista previa: Inventario Actual
+2026-05-08 18:31:23 [Thread-46] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Generó vista previa: KPIs y Anomalías
+2026-05-08 19:07:04 [JavaFX Application Thread] INFO  com.imperial.modelo.ConexionBD - Configuración de base de datos cargada correctamente. URL: jdbc:mysql://localhost:3306/imperialmotors
+2026-05-08 19:07:04 [Thread-5] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Inicio de sesión exitoso
+2026-05-08 19:07:16 [Thread-34] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Generó vista previa: Ventas del Mes
+2026-05-08 19:07:27 [Thread-35] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Exportó Excel: Ventas del Mes
+2026-05-08 19:08:36 [Thread-36] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Exportó Excel: Inventario Actual
+2026-05-08 19:08:42 [Thread-37] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Generó vista previa: Inventario Actual
+2026-05-08 19:09:00 [Thread-38] INFO  com.imperial.dominio.BitacoraImpl - Usuario ID: 7 | Nombre: Roberto | Accion: Exportó Excel: Inventario Actual

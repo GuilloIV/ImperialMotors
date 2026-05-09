@@ -4,6 +4,7 @@ import com.imperial.dominio.BitacoraImpl;
 import com.imperial.dominio.ReporteImpl;
 import com.imperial.modelo.pojo.Usuario;
 import com.imperial.utilidad.Constantes;
+import com.imperial.utilidad.GeneracionExcel;
 import com.imperial.utilidad.GeneracionPDF;
 import com.imperial.utilidad.Sesion;
 import com.imperial.utilidad.Utilidades;
@@ -38,24 +39,31 @@ public class ReportesFinancierosController implements Initializable {
 
     @FXML private ComboBox<String> comboReporte;
     @FXML private VBox contenedorGrafica;
+    @FXML private Button botonAuditoria;
     
     private BarChart<String, Number> graficaBarras;
     private List<String> datosTexto;
     private Usuario usuarioSesion;
-    @FXML
-    private Button botonAuditoria;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         usuarioSesion = Sesion.getUsuario();
+        
         comboReporte.getItems().addAll(
             "Ventas del Mes", 
             "Ventas por Semana", 
             "Ventas por Día", 
-            "Inventario Actual", 
             "KPIs y Anomalías"
         );
+        
         inicializarGrafica();
+        
+        // Listener para generación automática al seleccionar
+        comboReporte.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                procesarSeleccion(newValue);
+            }
+        });
     }    
 
     private void inicializarGrafica() {
@@ -66,71 +74,48 @@ public class ReportesFinancierosController implements Initializable {
         contenedorGrafica.getChildren().add(graficaBarras);
     }
 
-    // Método auxiliar para determinar si aplicamos filtro
+    private void procesarSeleccion(String seleccion) {
+        graficaBarras.getData().clear();
+        datosTexto = new ArrayList<>();
+        XYChart.Series<String, Number> serie = new XYChart.Series<>();
+        serie.setName(seleccion);
+
+        Integer idUsuario = obtenerIdUsuarioFiltro();
+
+        switch (seleccion) {
+            case "Ventas del Mes": cargarVentas(serie, "MES", idUsuario); break;
+            case "Ventas por Semana": cargarVentas(serie, "SEMANA", idUsuario); break;
+            case "Ventas por Día": cargarVentas(serie, "DIA", idUsuario); break;
+            case "KPIs y Anomalías": cargarKPI(serie, idUsuario); break;
+        }
+
+        graficaBarras.getData().add(serie);
+        
+        if (usuarioSesion != null) {
+            BitacoraImpl.registrar(usuarioSesion.getIdUsuario(), usuarioSesion.getNombre(), "Visualizó reporte: " + seleccion);
+        }
+    }
+
     private Integer obtenerIdUsuarioFiltro() {
         if (usuarioSesion != null && "Vendedor".equals(usuarioSesion.getRol())) {
             return usuarioSesion.getIdUsuario();
         }
-        return null; // Retorna null para Admin (ver todo)
+        return null;
     }
 
-    @FXML
-    private void clicGenerar(ActionEvent event) {
-        String seleccion = comboReporte.getValue();
-        if (seleccion == null) return;
-
-        graficaBarras.getData().clear();
-        datosTexto = new ArrayList<>();
-        XYChart.Series<String, Number> serie = new XYChart.Series<>();
-        serie.setName("Datos");
-
-        if ("Ventas del Mes".equals(seleccion)) {
-            cargarVentas(serie, "MES");
-        } else if ("Ventas por Semana".equals(seleccion)) {
-            cargarVentas(serie, "SEMANA");
-        } else if ("Ventas por Día".equals(seleccion)) {
-            cargarVentas(serie, "DIA");
-        } else if ("Inventario Actual".equals(seleccion)) {
-            cargarInventario(serie);
-        } else if ("KPIs y Anomalías".equals(seleccion)) {
-            cargarKPI(serie);
-        }
-        graficaBarras.getData().add(serie);
-        if (usuarioSesion != null) {
-            BitacoraImpl.registrar(usuarioSesion.getIdUsuario(), usuarioSesion.getNombre(), "Generó vista previa: " + seleccion);
-        }
-    }
-
-    private void cargarVentas(XYChart.Series<String, Number> serie, String periodo) {
-        // Obtenemos el ID para filtrar
-        Integer idUsuario = obtenerIdUsuarioFiltro();
-        
+    private void cargarVentas(XYChart.Series<String, Number> serie, String periodo, Integer idUsuario) {
         HashMap<String, Object> resp = ReporteImpl.obtenerDatosVentas(periodo, idUsuario);
+        
         if (!(boolean) resp.get("error")) {
             Map<String, Double> datos = (Map<String, Double>) resp.get("datos");
             for (Map.Entry<String, Double> entry : datos.entrySet()) {
                 serie.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-                datosTexto.add("Periodo: " + entry.getKey() + " | Total: $" + String.format("%.2f", entry.getValue()));
+                datosTexto.add(entry.getKey() + " | $" + String.format("%.2f", entry.getValue()));
             }
         }
     }
 
-    private void cargarInventario(XYChart.Series<String, Number> serie) {
-        // El inventario no se filtra por usuario, es global
-        HashMap<String, Object> resp = ReporteImpl.obtenerDatosInventario();
-        if (!(boolean) resp.get("error")) {
-            Map<String, Integer> datos = (Map<String, Integer>) resp.get("datos");
-            for (Map.Entry<String, Integer> entry : datos.entrySet()) {
-                serie.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-                datosTexto.add("Modelo: " + entry.getKey() + " | Cantidad: " + entry.getValue());
-            }
-        }
-    }
-
-    private void cargarKPI(XYChart.Series<String, Number> serie) {
-        // Obtenemos el ID para filtrar los KPIs personales
-        Integer idUsuario = obtenerIdUsuarioFiltro();
-        
+    private void cargarKPI(XYChart.Series<String, Number> serie, Integer idUsuario) {
         HashMap<String, Object> resp = ReporteImpl.analizarAnomaliasYKPI(idUsuario);
         if (!(boolean) resp.get("error")) {
             double promedio = (double) resp.get("promedio");
@@ -139,14 +124,35 @@ public class ReportesFinancierosController implements Initializable {
             serie.getData().add(new XYChart.Data<>("Promedio Venta", promedio));
             serie.getData().add(new XYChart.Data<>("Anomalías", anomalias.size()));
             
-            datosTexto.add("KPI - Venta Promedio Global: $" + String.format("%.2f", promedio));
-            datosTexto.add(" ");
-            datosTexto.add("--- Listado de Anomalías Detectadas ---");
-            
-            if(anomalias.isEmpty()){
-                datosTexto.add("No se detectaron ventas fuera del rango normal.");
-            } else {
+            datosTexto.add("KPI - Venta Promedio | $" + String.format("%.2f", promedio));
+            if(!anomalias.isEmpty()) {
+                datosTexto.add("--- Detalle de Anomalías ---");
                 datosTexto.addAll(anomalias);
+            }
+        }
+    }
+
+    @FXML
+    private void clicExcel(ActionEvent event) {
+        if (datosTexto == null || datosTexto.isEmpty()) {
+            Utilidades.mostrarAlerta("Atención", "Seleccione un reporte antes de exportar.", Alert.AlertType.WARNING);
+            return;
+        }
+        
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Exportar a Excel");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Libro de Excel (*.xlsx)", "*.xlsx"));
+        File archivo = fileChooser.showSaveDialog(null);
+
+        if (archivo != null) {
+            try {
+                GeneracionExcel.generarReporteProfesional(archivo, comboReporte.getValue(), datosTexto);
+                if (usuarioSesion != null) {
+                    BitacoraImpl.registrar(usuarioSesion.getIdUsuario(), usuarioSesion.getNombre(), "Exportó Excel: " + comboReporte.getValue());
+                }
+                Utilidades.mostrarAlerta("Éxito", "Archivo Excel generado correctamente.", Alert.AlertType.INFORMATION);
+            } catch (IOException e) {
+                Utilidades.mostrarAlerta("Error", "No se pudo guardar el archivo.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -154,13 +160,13 @@ public class ReportesFinancierosController implements Initializable {
     @FXML
     private void clicPDF(ActionEvent event) {
         if (datosTexto == null || datosTexto.isEmpty()) {
-            Utilidades.mostrarAlerta("Error", "Primero genere una vista previa", Alert.AlertType.WARNING);
+            Utilidades.mostrarAlerta("Atención", "Seleccione un reporte antes de exportar.", Alert.AlertType.WARNING);
             return;
         }
         
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Guardar PDF");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
         File archivo = fileChooser.showSaveDialog(null);
 
         if (archivo != null) {
@@ -169,11 +175,10 @@ public class ReportesFinancierosController implements Initializable {
                 if (usuarioSesion != null) {
                     BitacoraImpl.registrar(usuarioSesion.getIdUsuario(), usuarioSesion.getNombre(), "Exportó PDF: " + comboReporte.getValue());
                 }
-                Utilidades.mostrarAlerta("Éxito", "Reporte guardado con portada y formato profesional.", Alert.AlertType.INFORMATION);
-            } catch (DocumentException de) {
-                Utilidades.mostrarAlerta("Error", Constantes.ERROR_CLASE_UTILERIA, Alert.AlertType.ERROR);
-            } catch (IOException ioe){
-                Utilidades.mostrarAlerta("Error", Constantes.ERROR_BD, Alert.AlertType.NONE);
+                // CORRECCIÓN: Alerta de éxito añadida para paridad con Excel
+                Utilidades.mostrarAlerta("Éxito", "Archivo PDF generado correctamente.", Alert.AlertType.INFORMATION);
+            } catch (DocumentException | IOException e) {
+                Utilidades.mostrarAlerta("Error", "Error al generar el PDF.", Alert.AlertType.ERROR);
             }
         }
     }
@@ -195,9 +200,7 @@ public class ReportesFinancierosController implements Initializable {
             escenario.setTitle("Auditoria y LOGS");
             escenario.initModality(Modality.APPLICATION_MODAL);
             
-            Sesion.registrarVentana(escenario); 
             escenario.showAndWait();
-            
         } catch (IOException ioe) {
             Utilidades.mostrarAlerta("Error", Constantes.ERROR_ABRIR_VENTANA, Alert.AlertType.ERROR);
         }

@@ -16,18 +16,26 @@
             <Font name="SansSerif Bold" size="26.0" />
          </font>
       </Label>
-      <ComboBox fx:id="comboReporte" layoutX="40.0" layoutY="89.0" prefHeight="30.0" prefWidth="315.0" promptText="Seleccione reporte" />
-      <Button layoutX="441.0" layoutY="88.0" mnemonicParsing="false" onAction="#clicGenerar" text="Generar Vista" />
+      <ComboBox fx:id="comboReporte" layoutX="40.0" layoutY="89.0" prefHeight="30.0" prefWidth="366.0" promptText="Seleccione reporte" />
       <VBox fx:id="contenedorGrafica" layoutX="40.0" layoutY="142.0" prefHeight="370.0" prefWidth="720.0" style="-fx-border-color: lightgrey; -fx-background-color: WHITE;" />
-      <Button layoutX="595.0" layoutY="86.0" mnemonicParsing="false" onAction="#clicPDF" prefHeight="36.0" prefWidth="163.0" style="-fx-background-color: #A52019;" text="Exportar PDF" textFill="WHITE">
+      <Button layoutX="595.0" layoutY="86.0" mnemonicParsing="false" onAction="#clicPDF" prefHeight="36.0" prefWidth="163.0" text="Exportar PDF" textFill="WHITE">
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../recurso/reporte.png" />
+                  <Image url="@../recurso/PDF.png" />
                </image>
             </ImageView>
          </graphic></Button>
       <Button layoutX="596.0" layoutY="528.0" mnemonicParsing="false" onAction="#cerrarVentana" prefHeight="36.0" prefWidth="163.0" text="Cerrar" />
       <Button fx:id="botonAuditoria" layoutX="40.0" layoutY="528.0" mnemonicParsing="false" onAction="#clicEnReportes" prefHeight="26.0" prefWidth="232.0" style="-fx-background-color: #9DFF00;" text="Auditoria/Logs" />
+      <Button layoutX="418.0" layoutY="86.0" mnemonicParsing="false" onAction="#clicExcel" prefHeight="36.0" prefWidth="163.0" text="Exportar Excel" textFill="WHITE">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../recurso/EXCEL.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </AnchorPane>
